@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeMenu"
+    android:orientation="vertical"
+    android:background="#FEC957"
+
+    >
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/diduknow"/>
+
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#B75B1F">
+
+                <Button
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/lamp"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:id="@+id/button_general"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:background="#80FFFFFF"
+                    android:text="General"
+                    android:textColor="#ffff"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:background="#39ADD1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/track"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_animals"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Animals" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#3079AB"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/screen"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_computer"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Computer" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#C25975"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/earth"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_countries"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Countries" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F9845B"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/fruit"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_food"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Food" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#838CC7"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/anatomy"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_human_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Human Body" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#7D669E"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/team"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_people"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="People" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#53BBB4"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/thinking"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_psychology"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Psychology" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#51B46D"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/laboratory"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_science"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Science" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#E0AB18"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/galaxy"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_universe"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Universe" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#637A91"
+                android:orientation="horizontal">
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableLeft="@drawable/cloudy"
+                    android:drawableTint="#ffff"
+                    android:gravity="left"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/button_weather"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Weather" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

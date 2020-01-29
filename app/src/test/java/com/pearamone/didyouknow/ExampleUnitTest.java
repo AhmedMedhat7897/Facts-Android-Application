@@ -1,4 +1,4 @@
-package com.example.funfacts;
+package com.pearamone.didyouknow;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.example.funfacts;
+package com.pearamone.didyouknow;
 
 import android.graphics.Color;
 
@@ -7,7 +7,6 @@ import java.util.Random;
 public class ColorWheel {
     // Fields or Member Variables - Properties about the object
     private String[] colors = {
-            "#E15258",
             "#F9845B",
             "#838CC7",
             "#7D669E",
@@ -16,7 +15,15 @@ public class ColorWheel {
             "#E0AB18",
             "#637A91",
             "#F092B0",
-            "#B7C0C7"
+            "#B7C0C7",
+            "#d26769",
+            "#1e841c",
+            "#bbaf88",
+            "#24985b",
+            "#263736",
+            "#6ec3ce",
+            "#a8559e"
+
 };
     //Methods - Actions the object can take
     int getColor(){

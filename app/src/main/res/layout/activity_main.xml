@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<RelativeLayout android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#51B46D"
-    android:padding="50dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout"
-    tools:context=".MainActivity">
+    android:background="#51B46D"
+    android:paddingRight="40dp"
+    android:paddingLeft="40dp"
+    >
+
+    <!--<ImageView-->
+        <!--android:id="@+id/menu"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginTop="40dp"-->
+        <!--android:clickable="true"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/menu"/>-->
 
     <TextView
+        android:paddingTop="40dp"
+        android:id="@+id/activity_main_did_u_know"
+        android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -20,27 +34,56 @@
         android:textSize="24sp" />
 
     <TextView
+        android:id="@+id/activity_main_text_view_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activity_main_did_u_know"
+        android:layout_marginTop="0dp"
+        android:clickable="false"
+        android:text=""
+        android:textColor="#80FFFFFF"
+        android:textSize="15sp" />
+
+    <TextView
         android:id="@+id/factTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="-2dp"
-        android:text="Ants stretch when they wake up in the morning."
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:text=""
         android:textColor="#ffffff"
-        android:textSize="24sp" />
+        android:textSize="22sp" />
 
-    <Button
-        android:id="@+id/showFactButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/activity_main_image_view"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="70dp"
         android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:src="@drawable/upload" />
+
+    <ImageView
+        android:id="@+id/activity_main_fav_button"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="70dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:src="@drawable/ic_favorite_border_black_24dp" />
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="#ffffff"
-        android:text="Show Another Fun Fact"
-        android:textColor="#51B46D" />
-
-
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-2469721886989416/9083014491">
+    </com.google.android.gms.ads.AdView>
 </RelativeLayout>

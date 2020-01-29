@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FirstMenu"
+    android:orientation="vertical"
+    android:background="#FEC957"
+    >
+    <ImageView
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:src="@drawable/diduknow"/>
+
+        <LinearLayout
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#C25975">
+
+                <Button
+                    android:padding="30dp"
+                    android:drawableTint="#ffff"
+                    android:gravity="center"
+                    android:drawablePadding="30dp"
+                    android:id="@+id/first_menu_cat"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:background="#80FFFFFF"
+                    android:text="Categories"
+                    android:textColor="#ffff"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="#39ADD1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <Button
+                    android:textColor="#ffff"
+                    android:padding="30dp"
+                    android:drawableTint="#ffff"
+                    android:gravity="center"
+                    android:drawablePadding="30dp"
+                    android:background="#80FFFFFF"
+                    android:id="@+id/first_menu_fav"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:text="Favorites" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
