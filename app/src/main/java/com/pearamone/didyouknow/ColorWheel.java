@@ -20,7 +20,6 @@ public class ColorWheel {
             "#1e841c",
             "#bbaf88",
             "#24985b",
-            "#263736",
             "#6ec3ce",
             "#a8559e"
 

@@ -15,7 +15,24 @@ import java.util.ArrayList;
 
 public class DatabaseFacts extends SQLiteOpenHelper {
 
-    private static final String dbName = "facts_db";
+    public static final String TABLE_GENERAL_NAME = "general_fact_table";
+    public static final String FACT_NAME = "fact_name";
+    public static final String FACT_ID = "fact_id";
+    public static final String FACT_FAV = "fact_fav";
+
+    public static final String TABLE_ANIMAL_NAME = "animal_fact_table";
+    public static final String TABLE_COMPUTER_NAME = "computer_fact_table";
+    public static final String TABLE_HACKS_NAME = "hacks_fact_table";
+    public static final String TABLE_COUNTRIES_NAME = "countries_fact_table";
+    public static final String TABLE_FOOD_NAME = "food_fact_table";
+    public static final String TABLE_HUMANBODY_NAME = "humanbody_fact_table";
+    public static final String TABLE_PEOPLE_NAME = "people_fact_table";
+    public static final String TABLE_PSYCHOLOGY_NAME = "psychology_fact_table";
+    public static final String TABLE_SCIENCE_NAME = "science_fact_table";
+    public static final String TABLE_UNIVERSE_NAME = "universe_fact_table";
+    public static final String TABLE_WEATHER_NAME = "weather_fact_table";
+
+    private static final String dbName = "facts_db_2";
     private static final int dbVersion = 3;
     private Context context;
 
@@ -38,7 +55,7 @@ public class DatabaseFacts extends SQLiteOpenHelper {
         File dbFile = new File(appDbPath);
         if (!dbFile.exists()) {
             try {
-                InputStream mInput = context.getAssets().open("facts_db");
+                InputStream mInput = context.getAssets().open("facts_db_2");
                 OutputStream mOutput = new FileOutputStream(appDbPath);
                 byte[] mBuffer = new byte[1024];
                 int mLength;
@@ -57,73 +74,46 @@ public class DatabaseFacts extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-//        db.execSQL(Fact.CREATE_GENERAL_TABLE);
-//        db.execSQL(Fact.CREATE_ANIMAL_TABLE);
-//        db.execSQL(Fact.CREATE_COMPUTER_TABLE);
-//        db.execSQL(Fact.CREATE_COUNTRIES_TABLE);
-//        db.execSQL(Fact.CREATE_FOOD_TABLE);
-//        db.execSQL(Fact.CREATE_HUMANBODY_TABLE);
-//        db.execSQL(Fact.CREATE_PEOPLE_TABLE);
-//        db.execSQL(Fact.CREATE_PSYCHOLOGY_TABLE);
-//        db.execSQL(Fact.CREATE_SCIENCE_TABLE);
-//        db.execSQL(Fact.CREATE_UNIVERSE_TABLE);
-//        db.execSQL(Fact.CREATE_WEATHER_TABLE);
+//
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_GENERAL_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_ANIMAL_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_COMPUTER_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_COUNTRIES_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_FOOD_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_HUMANBODY_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_PEOPLE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_PSYCHOLOGY_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_SCIENCE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_UNIVERSE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + Fact.TABLE_WEATHER_NAME);
-//        onCreate(db);
+//
     }
 
-    public long insertFact(String fact, Boolean fav, String factFav, String factName, String tableName) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(factFav, fav);
-        values.put(factName, fact);
-        long id = db.insert(tableName, null, values);
-        db.close();
-        return id;
-    }
 
-    public Fact getFact(long id, String tableName, String factId, String factName, String factFav) {
+    public Fact getFact(long factId, String tableName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(tableName,
-                new String[]{factId, factName, factFav},
-                factId + "=?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
+                new String[]{FACT_ID, FACT_NAME, FACT_FAV},
+                FACT_ID + "=?",
+                new String[]{String.valueOf(factId)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
         Fact fact = new Fact(
-                cursor.getInt(cursor.getColumnIndex(factId)),
-                cursor.getString(cursor.getColumnIndex(factName)),
-                cursor.getInt(cursor.getColumnIndex(factFav)));
+                cursor.getInt(cursor.getColumnIndex(FACT_ID)),
+                cursor.getString(cursor.getColumnIndex(FACT_NAME)),
+                cursor.getInt(cursor.getColumnIndex(FACT_FAV)),
+                tableName);
         cursor.close();
+        db.close();
         return fact;
     }
 
-    public ArrayList<Fact> getFavFacts(String tableName, String factId, String factName, String factFav) {
+    public ArrayList<Fact> getFavFacts(String tableName) {
         ArrayList<Fact> facts = new ArrayList<>();
-        String selectQuery = "SELECT  * FROM " + tableName + " WHERE " + factFav + "= 1";
+        String selectQuery = "SELECT  * FROM " + tableName + " WHERE " + FACT_FAV + "= 1";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
                 Fact fact = new Fact();
-                fact.setFactId(cursor.getInt(cursor.getColumnIndex(factId)));
-                fact.setFact(cursor.getString(cursor.getColumnIndex(factName)));
-                fact.setFavorite(Integer.valueOf(cursor.getString(cursor.getColumnIndex(factFav))));
+                fact.setFactId(cursor.getInt(cursor.getColumnIndex(FACT_ID)));
+                fact.setFact(cursor.getString(cursor.getColumnIndex(FACT_NAME)));
+                fact.setFavorite(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FACT_FAV))));
+                fact.setTableName(tableName);
                 facts.add(fact);
             } while (cursor.moveToNext());
         }
@@ -141,20 +131,33 @@ public class DatabaseFacts extends SQLiteOpenHelper {
     }
 
 
-    public int updateFact(int factId, String factColumnId, Boolean fav, String factFav, String tableName, String factName, String name) {
+    public int updateFact(int factId, boolean fav,String tableName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(factFav, fav);
-        values.put(factName, name);
+        values.put(FACT_ID, factId);
+        values.put(FACT_FAV, fav);
         // updating row
-        return db.update(tableName, values, factColumnId + " = ?",
+        return db.update(tableName, values, FACT_ID + " = ?",
                 new String[]{String.valueOf(factId)});
     }
 
-//    public boolean isFavorite(int factId, String factColumnId, Boolean fav, String factFav, String tableName, String factName, String name){
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.query(tableName, )
-//    }
-
+    public ArrayList<Fact> getSearchedFacts(String tableName, String searchString) {
+        ArrayList<Fact> facts = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + tableName + " WHERE " + FACT_NAME + " LIKE " +"'%" + searchString + "%'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Fact fact = new Fact();
+                fact.setFactId(cursor.getInt(cursor.getColumnIndex(FACT_ID)));
+                fact.setFact(cursor.getString(cursor.getColumnIndex(FACT_NAME)));
+                fact.setFavorite(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FACT_FAV))));
+                fact.setTableName(tableName);
+                facts.add(fact);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return facts;
+    }
 }

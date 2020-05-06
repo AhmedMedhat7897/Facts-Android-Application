@@ -1,80 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/relativeLayout"
-    android:background="#51B46D"
-    android:paddingRight="40dp"
-    android:paddingLeft="40dp"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="25dp"
+    android:paddingBottom="25dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
-    <!--<ImageView-->
-        <!--android:id="@+id/menu"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_marginTop="40dp"-->
-        <!--android:clickable="true"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/menu"/>-->
+    <RelativeLayout
+        android:id="@+id/container_main"
+        android:paddingBottom="16dp"
+        android:background="@drawable/card_bg"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/title_text_color"
+            android:id="@+id/activity_main_text_view_id"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="20dp"
+            android:text="simple Title Text"/>
 
-    <TextView
-        android:paddingTop="40dp"
-        android:id="@+id/activity_main_did_u_know"
-        android:clickable="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="Did you know?"
-        android:textColor="#80FFFFFF"
-        android:textSize="24sp" />
+        <TextView
+            android:padding="10dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:lineSpacingExtra="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/factTextView"
+            android:textSize="18dp"
+            android:layout_alignStart="@id/activity_main_text_view_id"
+            android:layout_alignLeft="@id/activity_main_text_view_id"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
+            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."/>
 
-    <TextView
-        android:id="@+id/activity_main_text_view_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/activity_main_did_u_know"
-        android:layout_marginTop="0dp"
-        android:clickable="false"
-        android:text=""
-        android:textColor="#80FFFFFF"
-        android:textSize="15sp" />
+        <TextView
 
-    <TextView
-        android:id="@+id/factTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:text=""
-        android:textColor="#ffffff"
-        android:textSize="22sp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:id="@+id/activity_main_did_u_know"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="General Facts"
+            android:layout_marginTop="20dp"/>
+        <ImageView
+            android:layout_marginLeft="25dp"
+            android:id="@+id/activity_main_image_view"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            android:src="@drawable/ic_share_black_24dp" />
+
+        <ImageView
+            android:layout_marginRight="25dp"
+            android:id="@+id/activity_main_fav_button"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            android:src="@drawable/ic_favorite_border_black_24dp"/>
+    </RelativeLayout>
 
     <ImageView
-        android:id="@+id/activity_main_image_view"
-        android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="70dp"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:src="@drawable/upload" />
-
-    <ImageView
-        android:id="@+id/activity_main_fav_button"
-        android:layout_width="30dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="70dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:src="@drawable/ic_favorite_border_black_24dp" />
+        android:id="@+id/img_user"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/container_main"
+        app:layout_constraintStart_toStartOf="@+id/container_main"
+        app:layout_constraintTop_toTopOf="@+id/container_main"
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -82,8 +107,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintTop_toBottomOf="@id/container_main"
+        ads:layout_constraintRight_toRightOf="parent"
+        ads:layout_constraintLeft_toLeftOf="parent"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-2469721886989416/9083014491">
     </com.google.android.gms.ads.AdView>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

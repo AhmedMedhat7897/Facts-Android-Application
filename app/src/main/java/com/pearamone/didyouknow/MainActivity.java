@@ -3,16 +3,17 @@ package com.pearamone.didyouknow;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.google.android.gms.ads.AdRequest;
@@ -27,9 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private ColorWheel colorWheel = new ColorWheel();
     private TextView factTextView;
     private TextView textViewId;
+    private TextView textViewTableName;
+    ImageView tableImageView;
     AdView adView;
-    ImageView imageView;
-    ImageView menuImageView;
+    ImageView shareImageView;
     ImageView favImageView;
     float x1,x2,y1,y2;
     int i = 1;
@@ -39,11 +41,14 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Fact> favList = new ArrayList<>();
     private InterstitialAd mInterstitial;
     AdRequest interAdRequest;
-
+    int favId;
+    String favTable;
+    Typeface typeface;
 
     private DatabaseFacts db;
+    GradientDrawable shape;
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
 
         db = new DatabaseFacts(this);
         db.copyDbIfNotExists();
+        shape =  new GradientDrawable();
+        shape.setCornerRadius(40);
 
-
-        MobileAds.initialize(this, "ca-app-pub-2469721886989416~7390658870");
-        adView = findViewById(R.id.adView);
-        AdRequest bannerAdRequest = new AdRequest.Builder().build();
-        adView.loadAd(bannerAdRequest);
+//        MobileAds.initialize(this, "ca-app-pub-2469721886989416~7390658870");
+//        adView = findViewById(R.id.adView);
+//        AdRequest bannerAdRequest = new AdRequest.Builder().build();
+//        adView.loadAd(bannerAdRequest);
 
         interAdRequest = new AdRequest.Builder().build();
         mInterstitial = new InterstitialAd(this);
@@ -64,355 +70,275 @@ public class MainActivity extends AppCompatActivity {
         mInterstitial.loadAd(interAdRequest);
 
         factTextView = findViewById(R.id.factTextView);
-        relativeLayout = findViewById(R.id.relativeLayout);
+        relativeLayout = findViewById(R.id.container_main);
         textViewId = findViewById(R.id.activity_main_text_view_id);
         favImageView = findViewById(R.id.activity_main_fav_button);
+        shareImageView = findViewById(R.id.activity_main_image_view);
+        textViewTableName = findViewById(R.id.activity_main_did_u_know);
+        tableImageView = findViewById(R.id.img_user);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            typeface = getResources().getFont(R.font.sourceserifproregular);
+        }
+        factTextView.setTypeface(typeface);
         Intent intent  = getIntent();
         final int choice = intent.getIntExtra("choice",0);
 
-
-
-        switch (choice){
+        switch (choice) {
             case 1:
-                factTextView.setText(db.getFact((readFromShared("defaultKey")-1), Fact.TABLE_GENERAL_NAME, Fact.GENERAL_FACT_ID, Fact.GENERAL_FACT_NAME, Fact.GENERAL_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("defaultKey")-1) + " of " + db.getFactsCount(Fact.TABLE_GENERAL_NAME));
+                tableImageView.setImageResource(R.drawable.facts_circle);
+                textViewTableName.setText("General Facts");
+                factTextView.setText(db.getFact((readFromShared("defaultKey") - 1), DatabaseFacts.TABLE_GENERAL_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("defaultKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_GENERAL_NAME));
 
-                if(db.getFact((readFromShared("defaultKey")-1), Fact.TABLE_GENERAL_NAME, Fact.GENERAL_FACT_ID, Fact.GENERAL_FACT_NAME, Fact.GENERAL_FACT_FAV).isFavorite() == 0){
+                if (db.getFact((readFromShared("defaultKey") - 1), DatabaseFacts.TABLE_GENERAL_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        onSwipeMethod(event,"defaultKey",Fact.TABLE_GENERAL_NAME, Fact.GENERAL_FACT_ID, Fact.GENERAL_FACT_NAME, Fact.GENERAL_FACT_FAV);
-                        showAd();
-                        return true;
-                }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("defaultKey",Fact.TABLE_GENERAL_NAME, Fact.GENERAL_FACT_ID, Fact.GENERAL_FACT_NAME, Fact.GENERAL_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    onSwipeMethod(event, "defaultKey", DatabaseFacts.TABLE_GENERAL_NAME);
+                    showAd();
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("defaultKey", DatabaseFacts.TABLE_GENERAL_NAME));
                 break;
 
             case 2:
-                factTextView.setText(db.getFact((readFromShared("animalKey")-1), Fact.TABLE_ANIMAL_NAME, Fact.ANIMAL_FACT_ID, Fact.ANIMAL_FACT_NAME, Fact.ANIMAL_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("animalKey")-1) + " of " + db.getFactsCount(Fact.TABLE_ANIMAL_NAME));
-                if(db.getFact((readFromShared("animalKey")-1), Fact.TABLE_ANIMAL_NAME, Fact.ANIMAL_FACT_ID, Fact.ANIMAL_FACT_NAME, Fact.ANIMAL_FACT_FAV).isFavorite() == 0){
+                tableImageView.setImageResource(R.drawable.animal_circle);
+                textViewTableName.setText("Animal Facts");
+                factTextView.setText(db.getFact((readFromShared("animalKey") - 1), DatabaseFacts.TABLE_ANIMAL_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("animalKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_ANIMAL_NAME));
+                if (db.getFact((readFromShared("animalKey") - 1), DatabaseFacts.TABLE_ANIMAL_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"animalKey", Fact.TABLE_ANIMAL_NAME, Fact.ANIMAL_FACT_ID, Fact.ANIMAL_FACT_NAME,Fact.ANIMAL_FACT_FAV);
-                        return true;
-                    }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("animalKey",Fact.TABLE_ANIMAL_NAME, Fact.ANIMAL_FACT_ID, Fact.ANIMAL_FACT_NAME, Fact.ANIMAL_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "animalKey", DatabaseFacts.TABLE_ANIMAL_NAME);
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("animalKey", DatabaseFacts.TABLE_ANIMAL_NAME));
 
 
                 break;
 
             case 3:
-                factTextView.setText(db.getFact((readFromShared("computerKey")-1), Fact.TABLE_COMPUTER_NAME, Fact.COMPUTER_FACT_ID, Fact.COMPUTER_FACT_NAME,Fact.COMPUTER_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("computerKey")-1) + " of " + db.getFactsCount(Fact.TABLE_COMPUTER_NAME));
+                tableImageView.setImageResource(R.drawable.computer_circle);
+                textViewTableName.setText("Computer Facts");
+                factTextView.setText(db.getFact((readFromShared("computerKey") - 1), DatabaseFacts.TABLE_COMPUTER_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("computerKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_COMPUTER_NAME));
 
-                if(db.getFact((readFromShared("computerKey")-1), Fact.TABLE_COMPUTER_NAME, Fact.COMPUTER_FACT_ID, Fact.COMPUTER_FACT_NAME, Fact.COMPUTER_FACT_FAV).isFavorite() == 0){
+                if (db.getFact((readFromShared("computerKey") - 1), DatabaseFacts.TABLE_COMPUTER_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"computerKey", Fact.TABLE_COMPUTER_NAME, Fact.COMPUTER_FACT_ID, Fact.COMPUTER_FACT_NAME,Fact.COMPUTER_FACT_FAV);
-                        return true;
-                    }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("computerKey",Fact.TABLE_COMPUTER_NAME, Fact.COMPUTER_FACT_ID, Fact.COMPUTER_FACT_NAME, Fact.COMPUTER_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "computerKey", DatabaseFacts.TABLE_COMPUTER_NAME);
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("computerKey", DatabaseFacts.TABLE_COMPUTER_NAME));
                 break;
 
             case 4:
-                factTextView.setText(db.getFact((readFromShared("countriesKey")-1), Fact.TABLE_COUNTRIES_NAME, Fact.COUNTRIES_FACT_ID, Fact.COUNTRIES_FACT_NAME, Fact.COUNTRIES_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("countriesKey")-1) + " of " + db.getFactsCount(Fact.TABLE_COUNTRIES_NAME));
+                tableImageView.setImageResource(R.drawable.country_circle);
+                textViewTableName.setText("Countries Facts");
+                factTextView.setText(db.getFact((readFromShared("countriesKey") - 1), DatabaseFacts.TABLE_COUNTRIES_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("countriesKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_COUNTRIES_NAME));
 
-                if(db.getFact((readFromShared("countriesKey")-1), Fact.TABLE_COUNTRIES_NAME, Fact.COUNTRIES_FACT_ID, Fact.COUNTRIES_FACT_NAME, Fact.COUNTRIES_FACT_FAV).isFavorite() == 0){
+                if (db.getFact((readFromShared("countriesKey") - 1), DatabaseFacts.TABLE_COUNTRIES_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"countriesKey", Fact.TABLE_COUNTRIES_NAME, Fact.COUNTRIES_FACT_ID, Fact.COUNTRIES_FACT_NAME, Fact.COUNTRIES_FACT_FAV);
-                        return true;
-                    }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("countriesKey",Fact.TABLE_COUNTRIES_NAME, Fact.COUNTRIES_FACT_ID, Fact.COUNTRIES_FACT_NAME, Fact.COUNTRIES_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "countriesKey", DatabaseFacts.TABLE_COUNTRIES_NAME);
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("countriesKey", DatabaseFacts.TABLE_COUNTRIES_NAME));
                 break;
 
             case 5:
-                factTextView.setText(db.getFact((readFromShared("foodKey")-1), Fact.TABLE_FOOD_NAME, Fact.FOOD_FACT_ID, Fact.FOOD_FACT_NAME, Fact.FOOD_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("foodKey")-1) + " of " + db.getFactsCount(Fact.TABLE_FOOD_NAME));
+                tableImageView.setImageResource(R.drawable.food_circle);
+                textViewTableName.setText("Food Facts");
+                factTextView.setText(db.getFact((readFromShared("foodKey") - 1), DatabaseFacts.TABLE_FOOD_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("foodKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_FOOD_NAME));
 
-                if(db.getFact((readFromShared("foodKey")-1), Fact.TABLE_FOOD_NAME, Fact.FOOD_FACT_ID, Fact.FOOD_FACT_NAME, Fact.FOOD_FACT_FAV).isFavorite() == 0){
+                if (db.getFact((readFromShared("foodKey") - 1), DatabaseFacts.TABLE_FOOD_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"foodKey", Fact.TABLE_FOOD_NAME, Fact.FOOD_FACT_ID, Fact.FOOD_FACT_NAME, Fact.FOOD_FACT_FAV);
-                        return true;
-                    }});
-
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("foodKey",Fact.TABLE_FOOD_NAME, Fact.FOOD_FACT_ID, Fact.FOOD_FACT_NAME, Fact.FOOD_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "foodKey", DatabaseFacts.TABLE_FOOD_NAME);
+                    return true;
                 });
+
+
+                favImageView.setOnClickListener(v -> handleFavorites("foodKey", DatabaseFacts.TABLE_FOOD_NAME));
                 break;
 
             case 6:
-                factTextView.setText(db.getFact((readFromShared("humanBodyKey")-1), Fact.TABLE_HUMANBODY_NAME, Fact.HUMANBODY_FACT_ID, Fact.HUMANBODY_FACT_NAME, Fact.HUMANBODY_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("humanBodyKey")-1) + " of " + db.getFactsCount(Fact.TABLE_HUMANBODY_NAME));
-                if(db.getFact((readFromShared("humanBodyKey")-1), Fact.TABLE_HUMANBODY_NAME, Fact.HUMANBODY_FACT_ID, Fact.HUMANBODY_FACT_NAME, Fact.HUMANBODY_FACT_FAV).isFavorite() == 0){
+                tableImageView.setImageResource(R.drawable.humanbody_circle);
+                textViewTableName.setText("Human Body Facts");
+                factTextView.setText(db.getFact((readFromShared("humanBodyKey") - 1), DatabaseFacts.TABLE_HUMANBODY_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("humanBodyKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_HUMANBODY_NAME));
+                if (db.getFact((readFromShared("humanBodyKey") - 1), DatabaseFacts.TABLE_HUMANBODY_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"humanBodyKey", Fact.TABLE_HUMANBODY_NAME, Fact.HUMANBODY_FACT_ID, Fact.HUMANBODY_FACT_NAME, Fact.HUMANBODY_FACT_FAV);
-                        return true;
-                    }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("humanBodyKey",Fact.TABLE_HUMANBODY_NAME, Fact.HUMANBODY_FACT_ID, Fact.HUMANBODY_FACT_NAME, Fact.HUMANBODY_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "humanBodyKey", DatabaseFacts.TABLE_HUMANBODY_NAME);
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("humanBodyKey", DatabaseFacts.TABLE_HUMANBODY_NAME));
                 break;
 
             case 7:
-                factTextView.setText(db.getFact((readFromShared("peopleKey")-1), Fact.TABLE_PEOPLE_NAME, Fact.PEOPLE_FACT_ID, Fact.PEOPLE_FACT_NAME, Fact.PEOPLE_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("peopleKey")-1) + " of " + db.getFactsCount(Fact.TABLE_PEOPLE_NAME));
-                if(db.getFact((readFromShared("peopleKey")-1), Fact.TABLE_PEOPLE_NAME, Fact.PEOPLE_FACT_ID, Fact.PEOPLE_FACT_NAME, Fact.PEOPLE_FACT_FAV).isFavorite() == 0){
+                tableImageView.setImageResource(R.drawable.people_circle);
+                textViewTableName.setText("People Facts");
+                factTextView.setText(db.getFact((readFromShared("peopleKey") - 1), DatabaseFacts.TABLE_PEOPLE_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("peopleKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_PEOPLE_NAME));
+                if (db.getFact((readFromShared("peopleKey") - 1), DatabaseFacts.TABLE_PEOPLE_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"peopleKey", Fact.TABLE_PEOPLE_NAME, Fact.PEOPLE_FACT_ID, Fact.PEOPLE_FACT_NAME, Fact.PEOPLE_FACT_FAV);
-                        return true;
-                    }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("peopleKey",Fact.TABLE_PEOPLE_NAME, Fact.PEOPLE_FACT_ID, Fact.PEOPLE_FACT_NAME, Fact.PEOPLE_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "peopleKey", DatabaseFacts.TABLE_PEOPLE_NAME);
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("peopleKey", DatabaseFacts.TABLE_PEOPLE_NAME));
                 break;
 
             case 8:
-                factTextView.setText(db.getFact((readFromShared("psychologyKey")-1), Fact.TABLE_PSYCHOLOGY_NAME, Fact.PSYCHOLOGY_FACT_ID, Fact.PSYCHOLOGY_FACT_NAME, Fact.PSYCHOLOGY_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("psychologyKey")-1) + " of " + db.getFactsCount(Fact.TABLE_PSYCHOLOGY_NAME));
-                if(db.getFact((readFromShared("psychologyKey")-1), Fact.TABLE_PSYCHOLOGY_NAME, Fact.PSYCHOLOGY_FACT_ID, Fact.PSYCHOLOGY_FACT_NAME, Fact.PSYCHOLOGY_FACT_FAV).isFavorite() == 0){
+                tableImageView.setImageResource(R.drawable.psychology_circle);
+                textViewTableName.setText("Psychology Facts");
+                factTextView.setText(db.getFact((readFromShared("psychologyKey") - 1), DatabaseFacts.TABLE_PSYCHOLOGY_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("psychologyKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_PSYCHOLOGY_NAME));
+                if (db.getFact((readFromShared("psychologyKey") - 1), DatabaseFacts.TABLE_PSYCHOLOGY_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"psychologyKey", Fact.TABLE_PSYCHOLOGY_NAME, Fact.PSYCHOLOGY_FACT_ID, Fact.PSYCHOLOGY_FACT_NAME, Fact.PSYCHOLOGY_FACT_FAV);
-                        return true;
-                    }});
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("psychologyKey",Fact.TABLE_PSYCHOLOGY_NAME, Fact.PSYCHOLOGY_FACT_ID, Fact.PSYCHOLOGY_FACT_NAME, Fact.PSYCHOLOGY_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "psychologyKey", DatabaseFacts.TABLE_PSYCHOLOGY_NAME);
+                    return true;
                 });
+                favImageView.setOnClickListener(v -> handleFavorites("psychologyKey", DatabaseFacts.TABLE_PSYCHOLOGY_NAME));
                 break;
 
             case 9:
-                factTextView.setText(db.getFact((readFromShared("scienceKey")-1), Fact.TABLE_SCIENCE_NAME, Fact.SCIENCE_FACT_ID, Fact.SCIENCE_FACT_NAME, Fact.SCIENCE_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("scienceKey")-1) + " of " + db.getFactsCount(Fact.TABLE_SCIENCE_NAME));
+                tableImageView.setImageResource(R.drawable.chemistry_circle);
+                textViewTableName.setText("Science Facts");
+                factTextView.setText(db.getFact((readFromShared("scienceKey") - 1), DatabaseFacts.TABLE_SCIENCE_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("scienceKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_SCIENCE_NAME));
 
-                if(db.getFact((readFromShared("scienceKey")-1), Fact.TABLE_SCIENCE_NAME, Fact.SCIENCE_FACT_ID, Fact.SCIENCE_FACT_NAME, Fact.SCIENCE_FACT_FAV).isFavorite() == 0){
+                if (db.getFact((readFromShared("scienceKey") - 1), DatabaseFacts.TABLE_SCIENCE_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"scienceKey", Fact.TABLE_SCIENCE_NAME, Fact.SCIENCE_FACT_ID, Fact.SCIENCE_FACT_NAME, Fact.SCIENCE_FACT_FAV);
-                        return true;
-                    }});
-
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("scienceKey",Fact.TABLE_SCIENCE_NAME, Fact.SCIENCE_FACT_ID, Fact.SCIENCE_FACT_NAME, Fact.SCIENCE_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "scienceKey", DatabaseFacts.TABLE_SCIENCE_NAME);
+                    return true;
                 });
+
+                favImageView.setOnClickListener(v -> handleFavorites("scienceKey", DatabaseFacts.TABLE_SCIENCE_NAME));
                 break;
 
             case 10:
-                factTextView.setText(db.getFact((readFromShared("universeKey")-1), Fact.TABLE_UNIVERSE_NAME, Fact.UNIVERSE_FACT_ID, Fact.UNIVERSE_FACT_NAME, Fact.UNIVERSE_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("universeKey")-1) + " of " + db.getFactsCount(Fact.TABLE_UNIVERSE_NAME));
-                if(db.getFact((readFromShared("universeKey")-1), Fact.TABLE_UNIVERSE_NAME, Fact.UNIVERSE_FACT_ID, Fact.UNIVERSE_FACT_NAME, Fact.UNIVERSE_FACT_FAV).isFavorite() == 0){
+                tableImageView.setImageResource(R.drawable.universe_circle);
+                textViewTableName.setText("Universe Facts");
+                factTextView.setText(db.getFact((readFromShared("universeKey") - 1), DatabaseFacts.TABLE_UNIVERSE_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("universeKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_UNIVERSE_NAME));
+                if (db.getFact((readFromShared("universeKey") - 1), DatabaseFacts.TABLE_UNIVERSE_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"universeKey", Fact.TABLE_UNIVERSE_NAME, Fact.UNIVERSE_FACT_ID, Fact.UNIVERSE_FACT_NAME, Fact.UNIVERSE_FACT_FAV);
-                        return true;
-                    }});
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("universeKey",Fact.TABLE_UNIVERSE_NAME, Fact.UNIVERSE_FACT_ID, Fact.UNIVERSE_FACT_NAME, Fact.UNIVERSE_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "universeKey", DatabaseFacts.TABLE_UNIVERSE_NAME);
+                    return true;
                 });
+                favImageView.setOnClickListener(v -> handleFavorites("universeKey", DatabaseFacts.TABLE_UNIVERSE_NAME));
                 break;
 
             case 11:
-                factTextView.setText(db.getFact((readFromShared("weatherKey")-1), Fact.TABLE_WEATHER_NAME, Fact.WEATHER_FACT_ID, Fact.WEATHER_FACT_NAME, Fact.WEATHER_FACT_FAV).getFact());
-                textViewId.setText("Fact " + (readFromShared("weatherKey")-1) + " of " + db.getFactsCount(Fact.TABLE_WEATHER_NAME));
-                if(db.getFact((readFromShared("weatherKey")-1), Fact.TABLE_WEATHER_NAME, Fact.WEATHER_FACT_ID, Fact.WEATHER_FACT_NAME, Fact.WEATHER_FACT_FAV).isFavorite() == 0){
+                tableImageView.setImageResource(R.drawable.weather_circle);
+                textViewTableName.setText("Weather Facts");
+                factTextView.setText(db.getFact((readFromShared("weatherKey") - 1), DatabaseFacts.TABLE_WEATHER_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("weatherKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_WEATHER_NAME));
+                if (db.getFact((readFromShared("weatherKey") - 1), DatabaseFacts.TABLE_WEATHER_NAME).isFavorite() == 0) {
                     favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }else {
+                } else {
                     favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
 
-                relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        showAd();
-                        onSwipeMethod(event,"weatherKey", Fact.TABLE_WEATHER_NAME, Fact.WEATHER_FACT_ID, Fact.WEATHER_FACT_NAME, Fact.WEATHER_FACT_FAV);
-                        return true;
-                    }});
-                favImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleFavorites("weatherKey",Fact.TABLE_WEATHER_NAME, Fact.WEATHER_FACT_ID, Fact.WEATHER_FACT_NAME, Fact.WEATHER_FACT_FAV);
-                    }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "weatherKey", DatabaseFacts.TABLE_WEATHER_NAME);
+                    return true;
                 });
+                favImageView.setOnClickListener(v -> handleFavorites("weatherKey", DatabaseFacts.TABLE_WEATHER_NAME));
                 break;
 
-            case 20:
-                favList.addAll(db.getFavFacts(Fact.TABLE_GENERAL_NAME, Fact.GENERAL_FACT_ID, Fact.GENERAL_FACT_NAME, Fact.GENERAL_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_ANIMAL_NAME, Fact.ANIMAL_FACT_ID, Fact.ANIMAL_FACT_NAME,Fact.ANIMAL_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_COMPUTER_NAME, Fact.COMPUTER_FACT_ID, Fact.COMPUTER_FACT_NAME,Fact.COMPUTER_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_COUNTRIES_NAME, Fact.COUNTRIES_FACT_ID, Fact.COUNTRIES_FACT_NAME, Fact.COUNTRIES_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_FOOD_NAME, Fact.FOOD_FACT_ID, Fact.FOOD_FACT_NAME, Fact.FOOD_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_HUMANBODY_NAME, Fact.HUMANBODY_FACT_ID, Fact.HUMANBODY_FACT_NAME, Fact.HUMANBODY_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_PEOPLE_NAME, Fact.PEOPLE_FACT_ID, Fact.PEOPLE_FACT_NAME, Fact.PEOPLE_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_PSYCHOLOGY_NAME, Fact.PSYCHOLOGY_FACT_ID, Fact.PSYCHOLOGY_FACT_NAME, Fact.PSYCHOLOGY_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_SCIENCE_NAME, Fact.SCIENCE_FACT_ID, Fact.SCIENCE_FACT_NAME, Fact.SCIENCE_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_UNIVERSE_NAME, Fact.UNIVERSE_FACT_ID, Fact.UNIVERSE_FACT_NAME, Fact.UNIVERSE_FACT_FAV));
-                favList.addAll(db.getFavFacts(Fact.TABLE_WEATHER_NAME, Fact.WEATHER_FACT_ID, Fact.WEATHER_FACT_NAME, Fact.WEATHER_FACT_FAV));
-
-                favImageView.setVisibility(View.GONE);
-                if(favList.isEmpty()){
-                    factTextView.setText("You have no favorite facts yet!");
-                    textViewId.setText(null);
-                } else if(favList.size() == 1){
-                    factTextView.setText(favList.get(readFromShared("FavoriteKey")-2).getFact());
-                    textViewId.setText("Fact "+ (readFromShared("FavoriteKey")-1)+ " of " + favList.size());
+            case 12:
+                tableImageView.setImageResource(R.drawable.lifehacks_circle);
+                textViewTableName.setText("Life Hacks");
+                factTextView.setText(db.getFact((readFromShared("HacksKey") - 1), DatabaseFacts.TABLE_HACKS_NAME).getFact());
+                textViewId.setText("Fact " + (readFromShared("HacksKey") - 1) + " of " + db.getFactsCount(DatabaseFacts.TABLE_HACKS_NAME));
+                if (db.getFact((readFromShared("HacksKey") - 1), DatabaseFacts.TABLE_HACKS_NAME).isFavorite() == 0) {
+                    favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                } else {
+                    favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
                 }
-                else {
-                    factTextView.setText(favList.get(readFromShared("FavoriteKey")-1).getFact());
-                    textViewId.setText("Fact "+ (readFromShared("FavoriteKey"))+ " of " + favList.size());
 
-                    relativeLayout.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            onSwipeFavMethod(event,favList,"FavoriteKey");
-                            return true;
-                        }});
-                    break;
-                }
+                relativeLayout.setOnTouchListener((v, event) -> {
+                    showAd();
+                    onSwipeMethod(event, "HacksKey", DatabaseFacts.TABLE_HACKS_NAME);
+                    return true;
+                });
+                favImageView.setOnClickListener(v -> handleFavorites("HacksKey", DatabaseFacts.TABLE_HACKS_NAME));
+                break;
         }
 
 
-
-
-        imageView = findViewById(R.id.activity_main_image_view);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                String shareBody = factTextView.getText().toString();
-                String shareSub = "Another fact!";
-                intent.putExtra(intent.EXTRA_TEXT,shareBody);
-                intent.putExtra(intent.EXTRA_SUBJECT,shareSub);
-                startActivity(intent.createChooser(intent,"Share your fact."));
-            }
+        shareImageView.setOnClickListener(v -> {
+            Intent intent1 = new Intent(Intent.ACTION_SEND);
+            intent1.setType("text/plain");
+            String shareBody = factTextView.getText().toString();
+            String shareSub = "Another fact!";
+            intent1.putExtra(intent1.EXTRA_TEXT,shareBody);
+            intent1.putExtra(intent1.EXTRA_SUBJECT,shareSub);
+            startActivity(intent1.createChooser(intent1,"Share your fact."));
         });
-//
-//        menuImageView = findViewById(R.id.menu);
-//        menuImageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showMenu(v);
-//            }
-//        });
-
 
     }
 
@@ -424,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.commit();
         }
 
+
     private int readFromShared(String key) {
         SharedPreferences preferences = getSharedPreferences("MyShared", MODE_PRIVATE);
         i = preferences.getInt(key , 2);
@@ -431,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    void onSwipeMethod(MotionEvent event, String key, String tableName, String factId, String factName, String factFav){
+    void onSwipeMethod(MotionEvent event, String key, String tableName){
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 x1 = event.getX();
@@ -445,12 +372,13 @@ public class MainActivity extends AppCompatActivity {
                     if (i > 2) {
                         i -= 2;
 
-                        fact = db.getFact(i, tableName, factId, factName,factFav).getFact();
+                        fact = db.getFact(i, tableName).getFact();
                         factTextView.setText(fact);
                         int color = colorWheel.getColor();
-                        relativeLayout.setBackgroundColor(color);
+                        shape.setColor(color);
+                        relativeLayout.setBackground(shape);
                         textViewId.setText("Fact " + i + " of " + db.getFactsCount(tableName));
-                        if(db.getFact(i, tableName, factId, factName, factFav).isFavorite() == 0){
+                        if(db.getFact(i, tableName).isFavorite() == 0){
                             favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                         }else {
                             favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -460,12 +388,13 @@ public class MainActivity extends AppCompatActivity {
                 } else if (x2 < x1) { //RIGHT
                     readFromShared(key);
                     if (i <= db.getFactsCount(tableName)) {
-                        fact = db.getFact(i, tableName, factId, factName,factFav).getFact();
+                        fact = db.getFact(i, tableName).getFact();
                         factTextView.setText(fact);
                         int color = colorWheel.getColor();
-                        relativeLayout.setBackgroundColor(color);
+                        shape.setColor(color);
+                        relativeLayout.setBackground(shape);
                         textViewId.setText("Fact " + i + " of " + db.getFactsCount(tableName));
-                        if(db.getFact(i, tableName, factId, factName, factFav).isFavorite() == 0){
+                        if(db.getFact(i, tableName).isFavorite() == 0){
                             favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                         }else {
                             favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -476,12 +405,13 @@ public class MainActivity extends AppCompatActivity {
                 }else if (x2 == x1) {
                     readFromShared(key);
                     if (i <= db.getFactsCount(tableName)) {
-                        fact = db.getFact(i, tableName, factId, factName, factFav).getFact();
+                        fact = db.getFact(i, tableName).getFact();
                         factTextView.setText(fact);
                         int color = colorWheel.getColor();
-                        relativeLayout.setBackgroundColor(color);
+                        shape.setColor(color);
+                        relativeLayout.setBackground(shape);
                         textViewId.setText("Fact " + i + " of " + db.getFactsCount(tableName));
-                        if (db.getFact(i, tableName, factId, factName, factFav).isFavorite() == 0) {
+                        if (db.getFact(i, tableName).isFavorite() == 0) {
                             favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                         } else {
                             favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -494,65 +424,68 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void handleFavorites(String key, String tableName, String factId, String factName, String factFav){
+    void handleFavorites(String key, String tableName){
         int y = readFromShared(key)-1;
-        if(db.getFact(y, tableName, factId, factName, factFav).isFavorite() == 0){
+        if(db.getFact(y, tableName).isFavorite() == 0){
             favImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
-            db.updateFact(y,factId,true, factFav,tableName,factName,factTextView.getText().toString());
+            db.updateFact(y,true,tableName);
         }else {
             favImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-            db.updateFact(y,factId,false, factFav,tableName,factName,factTextView.getText().toString());
+            db.updateFact(y,false,tableName);
         }
 
         db.close();
     }
 
-    void onSwipeFavMethod(MotionEvent event,ArrayList<Fact> factArrayList, String key) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
-                y1 = event.getY();
-                break;
-            case MotionEvent.ACTION_UP:
-                x2 = event.getX();
-                y2 = event.getY();
-                if (x1 < x2) {//LEFT
-                    readFromShared(key);
-                    if (i >= 2) {
-                        i -= 2;
-                        fact = factArrayList.get(i).getFact();
-                        factTextView.setText(fact);
-                        int color = colorWheel.getColor();
-                        relativeLayout.setBackgroundColor(color);
-                        textViewId.setText("Fact " + (i+1) + " of " + factArrayList.size());
-                        createShared(i, key);
-                    } else i = 0;
-                } else if (x2 < x1) { //RIGHT
-                    readFromShared(key);
-                    if (i < factArrayList.size()) {
-                        fact = factArrayList.get(i).getFact();
-                        factTextView.setText(fact);
-                        int color = colorWheel.getColor();
-                        relativeLayout.setBackgroundColor(color);
-                        textViewId.setText("Fact " + (i+1) + " of " + factArrayList.size());
-                        createShared(i, key);
-                        i++;
-                    }else i=(factArrayList.size()-1);
-                } else if (x2 == x1) {
-                    readFromShared(key);
-                    if (i < factArrayList.size()) {
-                    fact = factArrayList.get(i).getFact();
-                    factTextView.setText(fact);
-                    int color = colorWheel.getColor();
-                    relativeLayout.setBackgroundColor(color);
-                    textViewId.setText("Fact " + (i+1) + " of " + factArrayList.size());
-                    createShared(i, key);
-                    i++;
-                    }else i=(factArrayList.size()-1);
-                }
-                break;
-        }
-    }
+//    void onSwipeFavMethod(MotionEvent event,ArrayList<Fact> factArrayList, String key) {
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                x1 = event.getX();
+//                y1 = event.getY();
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                x2 = event.getX();
+//                y2 = event.getY();
+//                if (x1 < x2) {//LEFT
+//                    readFromShared(key);
+//                    if (i >= 2) {
+//                        i -= 2;
+//                        fact = factArrayList.get(i).getFact();
+//                        factTextView.setText(fact);
+//                        int color = colorWheel.getColor();
+//                        shape.setColor(color);
+//                        relativeLayout.setBackground(shape);
+//                        textViewId.setText("Fact " + (i+1) + " of " + factArrayList.size());
+//                        createShared(i, key);
+//                    } else i = 0;
+//                } else if (x2 < x1) { //RIGHT
+//                    readFromShared(key);
+//                    if (i < factArrayList.size()) {
+//                        fact = factArrayList.get(i).getFact();
+//                        factTextView.setText(fact);
+//                        int color = colorWheel.getColor();
+//                        shape.setColor(color);
+//                        relativeLayout.setBackground(shape);
+//                        textViewId.setText("Fact " + (i+1) + " of " + factArrayList.size());
+//                        createShared(i, key);
+//                        i++;
+//                    }else i=(factArrayList.size()-1);
+//                } else if (x2 == x1) {
+//                    readFromShared(key);
+//                    if (i < factArrayList.size()) {
+//                    fact = factArrayList.get(i).getFact();
+//                    factTextView.setText(fact);
+//                    int color = colorWheel.getColor();
+//                    shape.setColor(color);
+//                    relativeLayout.setBackground(shape);
+//                    textViewId.setText("Fact " + (i+1) + " of " + factArrayList.size());
+//                    createShared(i, key);
+//                    i++;
+//                    }else i=(factArrayList.size()-1);
+//                }
+//                break;
+//        }
+//    }
 
     private void showAd(){
         if(adCounter <= 39){
@@ -565,28 +498,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-//    public void showMenu(View v) {
-//
-//        PopupMenu popup = new PopupMenu(this, v);
-//        // This activity implements OnMenuItemClickListener
-//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()){
-//                    case R.id.menu_jump:
-//                        return true;
-//                    case R.id.menu_verify:
-//                        return true;
-//                    default:
-//                        return false;
-//                }
-//            }
-//        });
-//        popup.inflate(R.menu.inner_menu);
-//        popup.show();
-//    }
-
     }
